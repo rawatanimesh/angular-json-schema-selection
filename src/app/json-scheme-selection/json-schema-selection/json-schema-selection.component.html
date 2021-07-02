@@ -1,0 +1,52 @@
+
+
+<button mat-flat-button color="primary" (click)="export()">Export</button>
+
+<!-- <mat-checkbox [(ngModel)]="isExpanded"
+
+                      (ngModelChange)="updateAllComplete()">
+
+        </mat-checkbox> -->
+  <div class="sv-json-editor">
+    <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: jsonList}"></ng-container>
+  </div>
+
+  <ng-template #editor let-list="list">
+    <div *ngFor="let item of list" class="sv-json-editor-row">
+      <ng-container *ngIf="!item.type || item.type==='flat'">
+        <div class="sv-json-editor-row-flat">
+          <div
+            class="sv-json-editor-row-key"
+            [style.width.ch]="item.key.toString().length + 1"
+            >{{item.key}}
+          </div>
+          <div
+            class="sv-json-editor-row-value"
+            [style.width.ch]="item.value.toString().length + 1"
+            >{{item.value}}
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="item.type && item.type!=='flat'">
+        <div class="sv-json-editor-row-object">
+          <span class="material-icons cursor iconSize" (click)="item.expanded = !item.expanded">
+            {{item.expanded ? 'expand_more' : 'navigate_next'}}
+          </span>
+          <div
+                  class="sv-json-editor-row-key"
+                  [style.width.ch]="item.key.toString().length + 1"
+                  >{{item.key}}</div>{{'(' + item.value.length + ')'}}
+
+        </div>
+
+        <div class="sv-json-editor-row-child" *ngIf="item.expanded">
+          <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: item.value}"></ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+
+
+
+
