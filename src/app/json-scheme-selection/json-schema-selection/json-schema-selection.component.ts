@@ -12,43 +12,87 @@ export class JsonSchemaSelectionComponent implements OnInit {
   @Input() jsonSchema = {};
   @Output() selectedOutputSchema = new EventEmitter();
 
-  jsonList = [];
+  jsonList:any = [];
 
   constructor() { }
 
   ngOnInit(): void {
     // this.selectedOutputSchema.emit(this.jsonSchema);
-    console.log('json list', this.jsonSchema);
+    console.log('json schema', this.jsonSchema);
     this.jsonToList(this.jsonList, this.jsonSchema);
     console.log('json list', this.jsonList);
   }
 
-  updateAllComplete(){
+  updateAllCheckItems(list:any){
+    // console.log('list',list);
+    list.forEach((x:any) => {
+        // console.log('item',x);
+        if (!x.type || x.type === 'flat') {
+          x.checked = this.jsonList.checked;
+        } else if (x.type === 'object') {
+          x.checked = this.jsonList.checked;
+          this.updateAllCheckItems(x.value);
+        } else if (x.type === 'array'){
+          x.checked = this.jsonList.checked;
+          this.updateAllCheckItems(x.value);
+        }
+    })
+  }
 
+  updateItemChecked(event:any,item:any){
+    // console.log(event,item);
+    item.checked = event;
+    if(this.typeof(item.value) === 'array' && item.value.length){
+      item.value.forEach((x:any) => {
+        if (!x.type || x.type === 'flat') {
+          x.checked = event;
+        } else if (x.type === 'object') {
+          x.checked = event;
+          x.value.forEach((y:any) => {
+            this.updateItemChecked(event,y);
+          })
+        } else if (x.type === 'array'){
+          x.checked = event;
+          x.value.forEach((y:any) => {
+            this.updateItemChecked(event,y);
+          })
+        }
+    })
+    }
   }
 
   jsonToList(list: Array<any>, json: any): void {
     for (const [key, value] of Object.entries(json)) {
-      if (this.typeof(value) === 'object') {
-        const newList: any = [];
+      if (this.typeof(value) === 'object' && value) {
+        const newList:any = [];
         this.pushData(list, key, newList, 'object');
         this.jsonToList(newList, value);
       } else if (this.typeof(value) === 'array') {
-        const newList: any = [];
+        const newList:any = [];
         // @ts-ignore
-        value.forEach((x, index) => {
-          if (this.typeof(x) === 'object') {
-            console.log('ddddddddddd', x);
-            this.jsonToList(newList, x);
-          } else {
-            this.pushData(newList, index.toString(), x, this.typeof(x));
-          }
-        });
+        this.checkArray(value, newList);
         this.pushData(list, key, newList, 'array');
       } else {
-        this.pushData(list, key, value, 'flat');
+        this.pushData(list, key, value === null ? 'null' : value, 'flat');
       }
     }
+  }
+
+  checkArray(value: Array<any>, newList: Array<any>): void {
+    value.forEach((x, index) => {
+      if (this.typeof(x) === 'object') {
+        const subList:any = [];
+        this.pushData(newList, index.toString(), subList, 'object');
+        this.jsonToList(subList, x);
+      } else if (this.typeof(x) === 'array') {
+        const subList:any = [];
+        // @ts-ignore
+        this.checkArray(x, subList);
+        this.pushData(newList, index.toString(), subList, 'array');
+      } else {
+        this.pushData(newList, index.toString(), x, this.typeof(x));
+      }
+    });
   }
 
   typeof(value: any): string {
@@ -76,18 +120,23 @@ export class JsonSchemaSelectionComponent implements OnInit {
   export(): void {
     const json: any = {};
     this.listToJson(this.jsonList, json);
-    console.log('pppppoooo>>>>', json);
+    console.log('output>>>>', json);
+    console.log('output JSON>>>>', JSON.stringify(json));
   }
 
   listToJson(list: Array<any>, json: any): void {
+    // console.log(list);
     list.forEach(x => {
-      if (!x.type || x.type === 'flat') {
-        json[x.key] = x.value;
-      } else if (x.type === 'object') {
-        json[x.key] = {};
-        this.listToJson(x.value, json[x.key]);
-      } else if (x.type === 'array'){
-        json[x.key] = x.value.map((y:any) => y.value);
+      if (x.checked) {
+        if (!x.type || x.type === 'flat') {
+          json[x.key] = x.value === 'null' ? null : x.value;
+        } else if (x.type === 'object') {
+          json[x.key] = {};
+          this.listToJson(x.value, json[x.key]);
+        } else if (x.type === 'array'){
+          json[x.key] = [];
+          this.listToJson(x.value, json[x.key]);
+        }
       }
     });
   }

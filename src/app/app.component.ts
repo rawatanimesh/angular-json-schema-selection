@@ -17,14 +17,17 @@ export class AppComponent implements OnInit{
     envType:'RCP',
     id:235,
     name:'testdataRCP',
+    flatArray:['a','b','c'],
     itemList:[
       {
         id:1,
-        name:'itemA'
+        name:'itemA',
+        workspace:['a','b','c']
       },
       {
         id:2,
-        name:'itemB'
+        name:'itemB',
+        workspace:['a','b','c']
       }
     ],
     creator:{
@@ -32,7 +35,7 @@ export class AppComponent implements OnInit{
       lastName:'Rathi',
     },
     lastModifier:{
-      userName: '',
+      userName: 'Sample Name',
       workspace:{
         id:235,
         name:'Current',

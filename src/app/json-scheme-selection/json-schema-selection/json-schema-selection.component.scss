@@ -1,37 +1,44 @@
 .sv-json-editor {
-  display: flex;
-  flex-direction: column;
-  &-row {
-    //display: flex;
-    //align-items: center;
-    padding: 4px 0 4px 22px;
-    &-key, &-value {
-      border: none;
-      outline: none;
+    display: flex;
+    flex-direction: column;
+    &-row {
+        //display: flex;
+        //align-items: center;
+        padding: 4px 0 4px 22px;
+        &-key,
+        &-value {
+            border: none;
+            outline: none;
+        }
+        &-key {
+            color: #00a0f0;
+        }
+        &-value {
+            color: #924c79;
+        }
+        &-child {
+            //margin-left: 32px;
+        }
+        &-object {
+            display: flex;
+            align-items: center;
+            margin-left: -22px;
+        }
+        &-flat {
+            display: flex;
+            align-items: center;
+        }
     }
-    &-key {
-      color: #00a0f0;
+    .cursor {
+        cursor: pointer;
     }
-    &-value {
-      color: #924c79;
+    .iconSize {
+        font-size: 20px;
     }
-    &-child {
-      //margin-left: 32px;
-    }
-    &-object {
-      display: flex;
-      align-items: center;
-      margin-left: -22px;
-    }
-    &-flat {
-      display: flex;
-      align-items: center;
-    }
-  }
-  .cursor {
-    cursor: pointer;
-  }
-  .iconSize {
-    font-size: 20px;
-  }
+}
+
+.root-object {
+    display: flex;
+    justify-content: start;
+    align-items: center;
 }
