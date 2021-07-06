@@ -1,12 +1,6 @@
 <button mat-flat-button color="primary" (click)="export()">Export</button>
 
-
-<!-- <mat-checkbox [(ngModel)]="isExpanded"
-
-                      (ngModelChange)="updateAllComplete()">
-
-        </mat-checkbox> -->
-<div class="sv-json-editor">
+<div class="sv-json-editor box-border">
     <div class="root-object">
         <mat-checkbox [(ngModel)]="jsonList.checked" (ngModelChange)="updateAllCheckItems(jsonList)">
         </mat-checkbox>
@@ -19,10 +13,9 @@
     <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: jsonList}"></ng-container>
 </div>
 
-<ng-template #editor let-list="list">
-
+<ng-template #editor let-list="list" let-child="child">
     <ng-container *ngIf="jsonList.expanded">
-        <div *ngFor="let item of list" class="sv-json-editor-row">
+        <div *ngFor="let item of list" class="sv-json-editor-row" [ngClass]="item.type !== 'flat' ? 'box-border':''">
             <ng-container *ngIf="!item.type || item.type==='flat'">
                 <div class="sv-json-editor-row-flat">
                     <div class="sv-json-editor-row-key" [style.width.ch]="item.key.toString().length + 1">{{item.key}}
@@ -34,37 +27,23 @@
 
             <ng-container *ngIf="item.type && item.type!=='flat'">
                 <div class="sv-json-editor-row-object" *ngIf="item.type==='array'">
-                    <mat-checkbox [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item)">
+                    <mat-checkbox [disabled]="item.disabled" [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item,false)">
                     </mat-checkbox>
                     <span class="material-icons cursor iconSize" (click)="item.expanded = !item.expanded">
-                {{item.expanded ? 'expand_more' : 'navigate_next'}}
-              </span>
+                      {{item.expanded ? 'expand_more' : 'navigate_next'}}
+                    </span>
                     <div class="sv-json-editor-row-key" [style.width.ch]="item.key.toString().length + 1">{{item.key}}</div>
-                    <!-- <div class="sv-json-editor-row-child" *ngIf="item.expanded">
-                  [
-
-                  <div *ngFor="let subItem of item.value">
-                      <ng-container *ngIf="subItem.type==='flat'">{{ subItem.value }}</ng-container>
-                      <ng-container *ngIf="subItem.type!=='flat'">
-                          <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: subItem.value}"></ng-container>
-                      </ng-container>
-                  </div>
-
-                  ]
-              </div> -->
-
                 </div>
 
 
                 <div class="sv-json-editor-row-object" *ngIf="item.type==='object'">
-                    <mat-checkbox [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item)">
+                    <mat-checkbox [disabled]="item.disabled" [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item,false)">
                     </mat-checkbox>
                     <span class="material-icons cursor iconSize" (click)="item.expanded = !item.expanded">
                 {{item.expanded ? 'expand_more' : 'navigate_next'}}
               </span>
                     <div class="sv-json-editor-row-key" [style.width.ch]="item.key.toString().length + 1">{{item.key}}</div>
                     <!-- {{'(' + item.value.length + ')'}} -->
-
                 </div>
 
                 <div class="sv-json-editor-row-child" *ngIf="item.expanded">
@@ -76,14 +55,13 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="subItem.type!=='flat' && i==0">
-                                <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: subItem.value}"></ng-container>
+                                <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: subItem.value,child: true}"></ng-container>
                             </ng-container>
                         </div>
                     </ng-container>
                     <ng-container *ngIf="item.type ==='object'">
-                        <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: item.value}"></ng-container>
+                        <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: item.value, child: true}"></ng-container>
                     </ng-container>
-
                 </div>
             </ng-container>
         </div>

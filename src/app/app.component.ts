@@ -22,12 +22,28 @@ export class AppComponent implements OnInit{
       {
         id:1,
         name:'itemA',
-        workspace:['a','b','c']
+        workspace:[
+            {
+            firstName:'Akshat',
+            lastName:{
+              firstName:'Akshat',
+              lastName:'Rathi',
+            },
+          }
+        ]
       },
       {
         id:2,
         name:'itemB',
-        workspace:['a','b','c']
+        workspace:[
+          {
+            firstName:'Akshat',
+            lastName:{
+              firstName:'Akshat',
+              lastName:'Rathi',
+            },
+          }
+        ]
       }
     ],
     creator:{
