@@ -10,7 +10,10 @@
         <div class="sv-json-editor-row-key">{{jsonSchemaName}}</div>
 
     </div>
-    <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: jsonList}"></ng-container>
+    <div class="sv-json-editor-row">
+        <ng-container [ngTemplateOutlet]="editor" [ngTemplateOutletContext]="{list: jsonList}"></ng-container>
+    </div>
+
 </div>
 
 <ng-template #editor let-list="list" let-child="child">
