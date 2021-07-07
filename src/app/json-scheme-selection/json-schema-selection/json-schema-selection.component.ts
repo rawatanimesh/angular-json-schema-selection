@@ -37,7 +37,7 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
 
   prepareList(list:any,isParent:boolean){
     list.forEach((item:any,index:number) =>{
-      item.disabled = true;
+      // item.disabled = true;
       if(!isParent){
         // item.disabled = true;
       }
@@ -46,7 +46,7 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
         item.value.forEach((x:any) => {
           if (!x.type || x.type === 'flat') {
           } else if (x.type === 'object') {
-            x.disabled = true;
+            // x.disabled = true;
             this.prepareList(x.value,false);
           } else if (x.type === 'array'){
             this.prepareList(x.value,false);
@@ -61,12 +61,12 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
     list.forEach((x:any) => {
         // console.log('item',x);
         x.checked = this.jsonList.checked;
-        if(this.jsonList.checked){
-          x.disabled = false;
-        }
-        else{
-          x.disabled = true;
-        }
+        // if(this.jsonList.checked){
+        //   x.disabled = false;
+        // }
+        // else{
+        //   x.disabled = true;
+        // }
         if (!x.type || x.type === 'flat') {
 
         } else if (x.type === 'object') {
@@ -100,26 +100,26 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
     else if(!item.checked && item.type !== 'flat'){
       this.checkCount--;
     }
-    if(isAutomatedSelection && !event){
-      item.disabled = true;
-      // item.expanded = false;
-    }
-    else{
-      item.disabled = false;
-      // item.expanded = true;
-    }
+    // if(isAutomatedSelection && !event){
+    //   // item.disabled = true;
+    //   // item.expanded = false;
+    // }
+    // else{
+    //   // item.disabled = false;
+    //   // item.expanded = true;
+    // }
     if(this.typeof(item.value) === 'array' && item.value.length){
       item.value.forEach((x:any) => {
         if (!x.type || x.type === 'flat') {
           x.checked = event;
         } else if (x.type === 'object') {
           x.checked = event;
-          if(!event){
-            x.disabled = true;
-          }
-          else{
-            x.disabled = false;
-          }
+          // if(!event){
+          //   x.disabled = true;
+          // }
+          // else{
+          //   x.disabled = false;
+          // }
           x.value.forEach((y:any) => {
             this.updateItemChecked(event,y,true);
           })

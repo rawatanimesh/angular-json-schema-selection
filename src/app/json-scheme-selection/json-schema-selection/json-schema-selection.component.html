@@ -2,7 +2,7 @@
 <!-- <div>Selected Schema :: {{checkCount}}</div> -->
 <div class="sv-json-editor box-border">
     <div class="root-object">
-        <mat-checkbox [(ngModel)]="jsonList.checked" (ngModelChange)="updateAllCheckItems(jsonList)">
+        <mat-checkbox [(ngModel)]="jsonList.checked" [(indeterminate)]="jsonList.checked" (ngModelChange)="updateAllCheckItems(jsonList)">
         </mat-checkbox>
         <span class="material-icons cursor iconSize" (click)="jsonList.expanded = !jsonList.expanded">
           {{jsonList.expanded ? 'expand_more' : 'navigate_next'}}
