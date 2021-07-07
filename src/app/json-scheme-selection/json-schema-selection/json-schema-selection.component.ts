@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, Output,EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output,EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-json-schema-selection',
   templateUrl: './json-schema-selection.component.html',
   styleUrls: ['./json-schema-selection.component.scss']
 })
-export class JsonSchemaSelectionComponent implements OnInit {
+export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
 
   @Input() isExpanded = false;
   @Input() jsonSchemaName = '';
@@ -13,28 +13,40 @@ export class JsonSchemaSelectionComponent implements OnInit {
   @Output() selectedOutputSchema = new EventEmitter();
 
   jsonList:any = [];
+  jsonSchemaCopy = {};
 
   constructor() { }
 
   ngOnInit(): void {
     // this.selectedOutputSchema.emit(this.jsonSchema);
-    console.log('json schema', this.jsonSchema);
+    this.jsonSchemaCopy = JSON.parse(JSON.stringify(this.jsonSchema));
+    console.log('json schema', this.jsonSchemaCopy);
     this.jsonToList(this.jsonList, this.jsonSchema, true);
     console.log('json list', this.jsonList);
     this.prepareList(this.jsonList,true);
     console.log('prepared json list', this.jsonList);
   }
 
+  ngOnChanges(changes:SimpleChanges){
+    // console.log(changes.isExpanded)
+    if(changes.isExpanded){
+      this.isExpanded = changes.isExpanded.currentValue;
+      this.toggleExpansion(this.jsonList,this.isExpanded);
+    }
+  }
+
   prepareList(list:any,isParent:boolean){
     list.forEach((item:any,index:number) =>{
+      item.disabled = true;
       if(!isParent){
-        item.disabled = true;
+        // item.disabled = true;
       }
       if(this.typeof(item.value) === 'array' && item.value.length){
         // item.value = item.value.splice(1);
         item.value.forEach((x:any) => {
           if (!x.type || x.type === 'flat') {
           } else if (x.type === 'object') {
+            x.disabled = true;
             this.prepareList(x.value,false);
           } else if (x.type === 'array'){
             this.prepareList(x.value,false);
@@ -43,27 +55,37 @@ export class JsonSchemaSelectionComponent implements OnInit {
       }
     })
   }
-
+  checkCount = 0;
   updateAllCheckItems(list:any){
     // console.log('list',list);
     list.forEach((x:any) => {
         // console.log('item',x);
+        x.checked = this.jsonList.checked;
+        if(this.jsonList.checked){
+          x.disabled = false;
+        }
+        else{
+          x.disabled = true;
+        }
         if (!x.type || x.type === 'flat') {
-          x.checked = this.jsonList.checked;
-          if(this.jsonList.checked){
-            x.disabled = false;
-          }
+
         } else if (x.type === 'object') {
-          x.checked = this.jsonList.checked;
-          if(this.jsonList.checked){
-            x.disabled = false;
+          if(x.checked){
+            this.checkCount++;
           }
+          else{
+            this.checkCount--;
+          }
+          // x.checked = this.jsonList.checked;
           this.updateAllCheckItems(x.value);
         } else if (x.type === 'array'){
-          x.checked = this.jsonList.checked;
-          if(this.jsonList.checked){
-            x.disabled = false;
+          if(x.checked){
+            this.checkCount++;
           }
+          else{
+            this.checkCount--;
+          }
+          // x.checked = this.jsonList.checked;
           this.updateAllCheckItems(x.value);
         }
     })
@@ -72,6 +94,12 @@ export class JsonSchemaSelectionComponent implements OnInit {
   updateItemChecked(event:any,item:any,isAutomatedSelection:boolean){
     console.log(event,item);
     item.checked = event;
+    if(item.checked && item.type !== 'flat'){
+      this.checkCount++;
+    }
+    else if(!item.checked && item.type !== 'flat'){
+      this.checkCount--;
+    }
     if(isAutomatedSelection && !event){
       item.disabled = true;
       // item.expanded = false;
@@ -86,6 +114,12 @@ export class JsonSchemaSelectionComponent implements OnInit {
           x.checked = event;
         } else if (x.type === 'object') {
           x.checked = event;
+          if(!event){
+            x.disabled = true;
+          }
+          else{
+            x.disabled = false;
+          }
           x.value.forEach((y:any) => {
             this.updateItemChecked(event,y,true);
           })
@@ -100,13 +134,18 @@ export class JsonSchemaSelectionComponent implements OnInit {
   }
 
   jsonToList(list: Array<any>, json: any, parent?:boolean): void {
-
     for (const [key, value] of Object.entries(json)) {
       if (this.typeof(value) === 'object' && value) {
         const newList:any = [];
         this.pushData(list, key, newList, 'object');
         this.jsonToList(newList, value);
       } else if (this.typeof(value) === 'array') {
+        // console.log(value);
+        var tempArray:any = value;
+        if(tempArray.length>1){
+          tempArray.splice(1);
+          // console.log(value,tempArray.splice(1))
+        }
         const newList:any = [];
         // @ts-ignore
         this.checkArray(value, newList);
@@ -159,8 +198,9 @@ export class JsonSchemaSelectionComponent implements OnInit {
   export(): void {
     const json: any = {};
     this.listToJson(this.jsonList, json);
-    console.log('output>>>>', json);
-    console.log('output JSON>>>>', JSON.stringify(json));
+    this.selectedOutputSchema.emit(json);
+    // console.log('output>>>>', json);
+    // console.log('output JSON>>>>', JSON.stringify(json));
   }
 
   listToJson(list: Array<any>, json: any): void {
@@ -178,6 +218,25 @@ export class JsonSchemaSelectionComponent implements OnInit {
         }
       }
     });
+  }
+
+  toggleExpansion(list:any,expand:boolean){
+    list.expanded = expand;
+    list.forEach((item:any,index:number) =>{
+      // console.log(item);
+      item.expanded = expand;
+      if(this.typeof(item.value) === 'array' && item.value.length){
+        item.value.forEach((x:any) => {
+          if (!x.type || x.type === 'flat') {
+          } else if (x.type === 'object') {
+            x.expanded = expand;
+            this.toggleExpansion(x.value,expand);
+          } else if (x.type === 'array'){
+            this.toggleExpansion(x.value,expand);
+          }
+      })
+      }
+    })
   }
 
 }

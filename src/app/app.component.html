@@ -1,12 +1,5 @@
-
-<button mat-flat-button color="primary">{{isExpanded?  'Collapse Fields': 'Expand Fields'}}</button>
+<button mat-flat-button color="primary" (click)="toggleExpansion()">{{isExpanded?  'Collapse Fields': 'Expand Fields'}}</button>
 <br>
 
-<app-json-schema-selection
-  [isExpanded]="isExpanded"
-  [jsonSchemaName]="jsonSchemaName"
-  [jsonSchema]="jsonSchema"
-  (selectedOutputSchema)="outputSchema($event)"
-
-></app-json-schema-selection>
-
+<app-json-schema-selection [isExpanded]="isExpanded" [jsonSchemaName]="jsonSchemaName" [jsonSchema]="jsonSchema" (selectedOutputSchema)="outputSchema($event)">
+</app-json-schema-selection>

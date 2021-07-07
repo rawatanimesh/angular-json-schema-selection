@@ -62,7 +62,12 @@ export class AppComponent implements OnInit{
   ngOnInit(): void {
   }
 
+  toggleExpansion(){
+    this.isExpanded = !this.isExpanded;
+  }
+
   outputSchema(event:any){
-    console.log(event);
+    console.log("selected json schema>>>",event);
+    console.log('output JSON>>>>', JSON.stringify(event));
   }
 }
