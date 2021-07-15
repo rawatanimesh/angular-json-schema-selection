@@ -21,10 +21,12 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
     // this.selectedOutputSchema.emit(this.jsonSchema);
     this.jsonSchemaCopy = JSON.parse(JSON.stringify(this.jsonSchema));
     console.log('json schema', this.jsonSchemaCopy);
-    this.jsonToList(this.jsonList, this.jsonSchema, true);
+    this.jsonToList(this.jsonList, this.jsonSchema);
     console.log('json list', this.jsonList);
     this.prepareList(this.jsonList,true);
     console.log('prepared json list', this.jsonList);
+    this.setParentIds(this.jsonList, []);
+    console.log('after set parent id', this.jsonList)
   }
 
   ngOnChanges(changes:SimpleChanges){
@@ -33,6 +35,18 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
       this.isExpanded = changes.isExpanded.currentValue;
       this.toggleExpansion(this.jsonList,this.isExpanded);
     }
+  }
+
+  setParentIds(list: Array<any>, parentId: Array<any>): void {
+    list.forEach(x => {
+      // console.log('>>>> pIDs', parentId.reduce((acc: any, val: any) => acc.concat(val), []) )
+      const parentIds= [];
+      parentIds.push(parentId.reduce((acc: any, val: any) => acc.concat(val), []))
+      x.parentIds = parentIds;
+      if (x.type === 'array' || x.type === 'object') {
+        this.setParentIds(x.value, [x.parentIds.reduce((acc: any, val: any) => acc.concat(val), []),x.id]);
+      }
+    });
   }
 
   prepareList(list:any,isParent:boolean){
@@ -185,7 +199,7 @@ export class JsonSchemaSelectionComponent implements OnInit,OnChanges {
   }
 
   pushData(list: Array<any>, key: string, value: any, type: string): void {
-    list.push({key, value, type, id: this.generateId(), });
+    list.push({key, value, type, id: this.generateId()});
   }
 
   generateId(): string {

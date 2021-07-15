@@ -2,7 +2,10 @@
 <!-- <div>Selected Schema :: {{checkCount}}</div> -->
 <div class="sv-json-editor box-border">
     <div class="root-object">
-        <mat-checkbox [(ngModel)]="jsonList.checked" [(indeterminate)]="jsonList.checked" (ngModelChange)="updateAllCheckItems(jsonList)">
+        <mat-checkbox
+          [(ngModel)]="jsonList.checked"
+          [(indeterminate)]="jsonList.indeterminate"
+          (ngModelChange)="updateAllCheckItems(jsonList)">
         </mat-checkbox>
         <span class="material-icons cursor iconSize" (click)="jsonList.expanded = !jsonList.expanded">
           {{jsonList.expanded ? 'expand_more' : 'navigate_next'}}
@@ -30,7 +33,11 @@
 
             <ng-container *ngIf="item.type && item.type!=='flat'">
                 <div class="sv-json-editor-row-object" *ngIf="item.type==='array'">
-                    <mat-checkbox [disabled]="item.disabled" [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item,false)">
+                    <mat-checkbox
+                    [disabled]="item.disabled"
+                    [(ngModel)]="item.checked"
+                    [(indeterminate)]="item.indeterminate"
+                    (ngModelChange)="updateItemChecked($event,item,false)">
                     </mat-checkbox>
                     <span class="material-icons cursor iconSize" (click)="item.expanded = !item.expanded">
                       {{item.expanded ? 'expand_more' : 'navigate_next'}}
@@ -40,7 +47,11 @@
 
 
                 <div class="sv-json-editor-row-object" *ngIf="item.type==='object'">
-                    <mat-checkbox [disabled]="item.disabled" [(ngModel)]="item.checked" (ngModelChange)="updateItemChecked($event,item,false)">
+                    <mat-checkbox
+                    [disabled]="item.disabled"
+                    [(ngModel)]="item.checked"
+                    [(indeterminate)]="item.indeterminate"
+                    (ngModelChange)="updateItemChecked($event,item,false)">
                     </mat-checkbox>
                     <span class="material-icons cursor iconSize" (click)="item.expanded = !item.expanded">
                 {{item.expanded ? 'expand_more' : 'navigate_next'}}
